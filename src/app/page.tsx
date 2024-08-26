@@ -1,12 +1,12 @@
 'use client'
 
 import { AccessTime, History } from "@mui/icons-material";
-import { Fade, ToggleButton, ToggleButtonGroup } from "@mui/material";
-import { LocalizationProvider, StaticDateTimePicker } from "@mui/x-date-pickers";
+import { Button, Dialog, DialogActions, DialogTitle, Fade, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { LocalizationProvider, PickersActionBarProps, StaticDateTimePicker, usePickersTranslations } from "@mui/x-date-pickers";
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
-import moment from "moment-timezone";
+import moment, { Moment } from "moment-timezone";
 import dynamic from "next/dynamic";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 const LocalClock = dynamic(() => import("./local-clock"), { ssr: false })
 const RegionalClock = dynamic(() => import("./regional-clock"), { ssr: false })
@@ -22,6 +22,52 @@ export default function Home() {
     setDate(moment(new Date()))
     if (isRealtime.current) resetTime()
   }, 500)
+
+  const handleTimeSelect = (date: Moment | null) => {
+    setIsSelectingTime(false)
+    if (date == null) {
+      setMode(0)
+      isRealtime.current = true
+    } else {
+      setMode(1)
+      isRealtime.current = false
+      setDate(date)
+    }
+  }
+
+  const DateTimeActionBar = (props: PickersActionBarProps) => {
+    const { onAccept, onCancel, onSetToday, actions, className } = props;
+    const translations = usePickersTranslations();
+
+    if (actions == null || actions.length === 0) {
+      return null;
+    }
+
+    return (
+      <DialogActions className={className + " justify-between"}>
+        <Button
+          onClick={onSetToday}
+          key="today"
+        >
+          {translations.todayButtonLabel}
+        </Button>
+        <div>
+          <Button
+            onClick={onCancel}
+            key="cancel"
+          >
+            {translations.cancelButtonLabel}
+          </Button>
+          <Button
+            onClick={onAccept}
+            key="accept"
+          >
+            {translations.okButtonLabel}
+          </Button>
+        </div>
+      </DialogActions>
+    );
+  }
 
   useEffect(() => {
     resetTime()
@@ -67,39 +113,27 @@ export default function Home() {
             </ToggleButton>
           </ToggleButtonGroup>
         </div>
-        {
-          isSelectingTime &&
+        <Dialog open={isSelectingTime}>
           <LocalizationProvider dateAdapter={AdapterMoment}>
             <StaticDateTimePicker
-              onAccept={(date) => {
-                setIsSelectingTime(false)
-                if (date == null) {
-                  setMode(0)
-                  isRealtime.current = true
-                } else {
-                  setMode(1)
-                  isRealtime.current = false
-                  setDate(date)
-                }
+              onAccept={date => handleTimeSelect(date)}
+              defaultValue={date}
+              slots={{
+                actionBar: DateTimeActionBar
               }}
               slotProps={{
                 actionBar: {
-                  actions: ['today', 'accept']
+                  actions: ['today', 'cancel', 'accept']
                 }
               }}
             />
           </LocalizationProvider>
-        }
-        {
-          !isSelectingTime &&
-          <Fade in={isSelectingTime}>
-            <RegionalClock
-              date={date}
-              timeZone="Asia/Hong_Kong"
-              regionName="Hong Kong"
-            />
-          </Fade>
-        }
+        </Dialog>
+        <RegionalClock
+          date={date}
+          timeZone="Asia/Hong_Kong"
+          regionName="Hong Kong"
+        />
       </div>
     </div>
   )
