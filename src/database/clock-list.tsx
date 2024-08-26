@@ -8,6 +8,10 @@ export const clockList = [
     "regionName": "Hong Kong"
   },
   {
+    "timeZone": "America/New_York",
+    "regionName": "New York"
+  },
+  {
     "timeZone": "Asia/Tokyo",
     "regionName": "Tokyo"
   }
