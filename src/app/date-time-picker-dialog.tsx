@@ -6,7 +6,7 @@ import { TransitionProps } from "@mui/material/transitions";
 import { LocalizationProvider, PickersActionBarProps, StaticDateTimePicker, usePickersTranslations } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import moment, { Moment } from "moment-timezone";
-import { Dispatch, forwardRef, SetStateAction } from "react";
+import { Dispatch, forwardRef, SetStateAction, useEffect, useState } from "react";
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -54,6 +54,8 @@ const DateTimePickerDialog = ({
   setDate: Dispatch<SetStateAction<moment.Moment>>,
   setPickerOpened: Dispatch<SetStateAction<boolean>>
 }) => {
+  const [fullScreen, setFullScreen] = useState(false)
+
   const handleSelect = (date: Moment | null) => {
     if (date !== null) {
       setMode(1)
@@ -62,10 +64,14 @@ const DateTimePickerDialog = ({
     setPickerOpened(false)
   }
 
+  useEffect(() => {
+    setFullScreen(window.innerWidth < 425 || window.innerHeight < 715)
+  }, [])
+
   return (
     <Dialog
       open={open}
-      fullScreen={window.innerWidth < 425 || window.innerHeight < 715}
+      fullScreen={fullScreen}
       TransitionComponent={Transition}
     >
       <div
