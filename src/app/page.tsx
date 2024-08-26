@@ -2,7 +2,7 @@
 
 import { clockList } from "@/database/clock-list";
 import { AccessTime, History, ImportExport } from "@mui/icons-material";
-import { Fade, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { Divider, Fade, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import moment from "moment-timezone";
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
@@ -45,15 +45,18 @@ export default function Home() {
 
   return (
     <Fade in={isLoaded}>
-      <div className="p-8 h-full grid grid-rows-[1fr_auto] gap-4">
-        <div>
-          <div className="grid gap-8">
-            <LocalClock
-              date={date}
-              timeZone={clockList[localIndex].timeZone}
-              regionName={clockList[localIndex].regionName}
-              isShowSecond={mode == 0}
-            />
+      <div>
+        <div
+          className="p-8 grid gap-8"
+        >
+          <LocalClock
+            date={date}
+            timeZone={clockList[localIndex].timeZone}
+            regionName={clockList[localIndex].regionName}
+            isShowSecond={mode == 0}
+          />
+          <Divider />
+          <div className="grid grid-cols-2 gap-8">
             {
               clockList
                 .filter((x, i) => i !== localIndex)
@@ -69,7 +72,7 @@ export default function Home() {
           </div>
         </div>
         <div
-          className="flex gap-4 justify-end"
+          className="absolute bottom-0 p-6 w-full flex gap-4 justify-end"
         >
           <ToggleButtonGroup
             color="primary"

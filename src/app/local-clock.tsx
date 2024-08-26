@@ -1,3 +1,4 @@
+import { Place } from "@mui/icons-material"
 import { Paper, Typography } from "@mui/material"
 import moment, { Moment } from "moment-timezone"
 
@@ -13,17 +14,22 @@ const LocalClock = ({
   isShowSecond: boolean
 }) => (
   <Paper
-    elevation={2}
+    elevation={4}
     className="p-4"
   >
     <div
-      className="grid gap-4"
+      className="grid gap-2"
     >
-      <Typography
-        variant="h5"
+      <div
+        className="flex gap-2 items-center"
       >
-        {regionName}
-      </Typography>
+        <Place color="primary" />
+        <Typography
+          variant="h6"
+        >
+          {regionName}
+        </Typography>
+      </div>
       <div
         className="flex items-baseline gap-2"
       >
@@ -47,7 +53,7 @@ const LocalClock = ({
         }
       </div>
       <Typography
-        variant="body2"
+        color="text.secondary"
       >
         {moment(date).tz(timeZone).format('ll')}
       </Typography>

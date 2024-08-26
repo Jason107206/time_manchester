@@ -1,9 +1,21 @@
+'use client'
+
 import { Close } from "@mui/icons-material";
-import { Button, Dialog, DialogActions, IconButton } from "@mui/material";
+import { Button, Dialog, DialogActions, Fade, IconButton } from "@mui/material";
+import { TransitionProps } from "@mui/material/transitions";
 import { LocalizationProvider, PickersActionBarProps, StaticDateTimePicker, usePickersTranslations } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import moment, { Moment } from "moment-timezone";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, forwardRef, SetStateAction } from "react";
+
+const Transition = forwardRef(function Transition(
+  props: TransitionProps & {
+    children: React.ReactElement<any, any>;
+  },
+  ref: React.Ref<unknown>,
+) {
+  return <Fade ref={ref} {...props} />;
+})
 
 const DateTimeActionBar = (props: PickersActionBarProps) => {
   const { onAccept, onSetToday, actions, className } = props;
@@ -14,7 +26,7 @@ const DateTimeActionBar = (props: PickersActionBarProps) => {
   }
 
   return (
-    <DialogActions className={className + " justify-between"}>
+    <DialogActions className={className + " !justify-between"}>
       <Button
         onClick={onSetToday}
         key="today"
@@ -53,32 +65,40 @@ const DateTimePickerDialog = ({
   return (
     <Dialog
       open={open}
+      fullScreen={window.innerWidth < 425 || window.innerHeight < 715}
+      TransitionComponent={Transition}
     >
       <div
-        className="flex justify-end"
+        className="p-2 h-full grid gap-2"
       >
-        <IconButton
-          color="primary"
-          onClick={() => setPickerOpened(false)}
+        <div
+          className="p-2 flex gap-2 justify-end"
         >
-          <Close />
-        </IconButton>
+          <div>
+            <IconButton
+              color="primary"
+              onClick={() => setPickerOpened(false)}
+            >
+              <Close />
+            </IconButton>
+          </div>
+        </div>
+        <LocalizationProvider
+          dateAdapter={AdapterMoment}
+        >
+          <StaticDateTimePicker
+            ampm={false}
+            defaultValue={moment(new Date())}
+            slots={{ actionBar: DateTimeActionBar }}
+            slotProps={{
+              actionBar: {
+                actions: ['today', 'accept']
+              }
+            }}
+            onAccept={date => handleSelect(date)}
+          />
+        </LocalizationProvider>
       </div>
-      <LocalizationProvider
-        dateAdapter={AdapterMoment}
-      >
-        <StaticDateTimePicker
-          ampm={false}
-          defaultValue={moment(new Date())}
-          slots={{ actionBar: DateTimeActionBar }}
-          slotProps={{
-            actionBar: {
-              actions: ['today', 'accept']
-            }
-          }}
-          onAccept={date => handleSelect(date)}
-        />
-      </LocalizationProvider>
     </Dialog>
   )
 }

@@ -12,28 +12,19 @@ const RegionalClock = ({
   regionName: string
 }) => (
   <Paper
-    variant="outlined"
+    elevation={4}
     className="p-4"
   >
     <div
-      className="flex items-center justify-between"
+      className="grid gap-2"
     >
-      <div
-        className="grid gap-1"
+      <Typography
+        variant="h6"
       >
-        <Typography
-          variant="h5"
-        >
-          {regionName}
-        </Typography>
-        <Typography
-          variant="body2"
-        >
-          {moment(date).tz(timeZone).format('ll')}
-        </Typography>
-      </div>
+        {regionName}
+      </Typography>
       <div
-        className="flex gap-2"
+        className="flex items-baseline gap-2"
       >
         <Typography
           variant="h4"
@@ -46,6 +37,11 @@ const RegionalClock = ({
           {addDigit(moment(date).tz(timeZone).minutes())}
         </Typography>
       </div>
+      <Typography
+        color="text.secondary"
+      >
+        {moment(date).tz(timeZone).format('ll')}
+      </Typography>
     </div>
   </Paper>
 )
