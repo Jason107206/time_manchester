@@ -54,33 +54,31 @@ const DateTimePickerDialog = ({
     <Dialog
       open={open}
     >
-      <div className="m-2">
-        <div
-          className="flex justify-end"
+      <div
+        className="flex justify-end"
+      >
+        <IconButton
+          color="primary"
+          onClick={() => setPickerOpened(false)}
         >
-          <IconButton
-            color="primary"
-            onClick={() => setPickerOpened(false)}
-          >
-            <Close />
-          </IconButton>
-        </div>
-        <LocalizationProvider
-          dateAdapter={AdapterMoment}
-        >
-          <StaticDateTimePicker
-            ampm={false}
-            defaultValue={moment(new Date())}
-            slots={{ actionBar: DateTimeActionBar }}
-            slotProps={{
-              actionBar: {
-                actions: ['today', 'accept']
-              }
-            }}
-            onAccept={date => handleSelect(date)}
-          />
-        </LocalizationProvider>
+          <Close />
+        </IconButton>
       </div>
+      <LocalizationProvider
+        dateAdapter={AdapterMoment}
+      >
+        <StaticDateTimePicker
+          ampm={false}
+          defaultValue={moment(new Date())}
+          slots={{ actionBar: DateTimeActionBar }}
+          slotProps={{
+            actionBar: {
+              actions: ['today', 'accept']
+            }
+          }}
+          onAccept={date => handleSelect(date)}
+        />
+      </LocalizationProvider>
     </Dialog>
   )
 }
