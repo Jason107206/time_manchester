@@ -81,7 +81,7 @@ export default function Home() {
             <ToggleButton
               value
               selected={mode == 0}
-              onChange={() => setMode(m => m == 1 ? 0 : 1)}
+              onChange={() => setMode(0)}
             >
               <AccessTime />&nbsp;Now
             </ToggleButton>
