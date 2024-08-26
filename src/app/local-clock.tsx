@@ -1,19 +1,19 @@
-import { Card, CardContent, CardHeader, Paper, Typography } from "@mui/material"
+import { Paper, Typography } from "@mui/material"
 import moment, { Moment } from "moment-timezone"
-import { useEffect, useState } from "react"
 
 const addDigit = (value: number) =>
   value.toString().length == 1 ? `0${value}` : `${value}`
 
 const LocalClock = ({
-  date, timeZone, regionName
+  date, timeZone, regionName, isShowSecond
 }: {
   date: Moment,
   timeZone: string,
-  regionName: string
+  regionName: string,
+  isShowSecond: boolean
 }) => (
   <Paper
-    variant="outlined"
+    elevation={2}
     className="p-4"
   >
     <div
@@ -37,16 +37,19 @@ const LocalClock = ({
         >
           {addDigit(moment(date).tz(timeZone).minutes())}
         </Typography>
-        <Typography
-          variant="h5"
-        >
-          {addDigit(moment(date).tz(timeZone).seconds())}
-        </Typography>
+        {
+          isShowSecond &&
+          <Typography
+            variant="h5"
+          >
+            {addDigit(moment(date).tz(timeZone).seconds())}
+          </Typography>
+        }
       </div>
       <Typography
         variant="body2"
       >
-        {moment(date).format('ll')}
+        {moment(date).tz(timeZone).format('ll')}
       </Typography>
     </div>
   </Paper>

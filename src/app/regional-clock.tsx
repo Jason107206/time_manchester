@@ -29,7 +29,7 @@ const RegionalClock = ({
         <Typography
           variant="body2"
         >
-          {moment(date).format('ll')}
+          {moment(date).tz(timeZone).format('ll')}
         </Typography>
       </div>
       <div
