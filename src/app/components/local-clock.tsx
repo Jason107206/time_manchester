@@ -1,9 +1,7 @@
 import { Place } from "@mui/icons-material"
 import { Paper, Typography } from "@mui/material"
 import moment, { Moment } from "moment-timezone"
-
-const addDigit = (value: number) =>
-  value.toString().length == 1 ? `0${value}` : `${value}`
+import { addDigit } from "../utils"
 
 const LocalClock = ({
   date, timeZone, regionName, isShowSecond
@@ -14,7 +12,7 @@ const LocalClock = ({
   isShowSecond: boolean
 }) => (
   <Paper
-    elevation={4}
+    variant="outlined"
     className="p-4"
   >
     <div
@@ -24,9 +22,7 @@ const LocalClock = ({
         className="flex gap-2 items-center"
       >
         <Place color="primary" />
-        <Typography
-          variant="h6"
-        >
+        <Typography>
           {regionName}
         </Typography>
       </div>
@@ -53,6 +49,7 @@ const LocalClock = ({
         }
       </div>
       <Typography
+        variant="body2"
         color="text.secondary"
       >
         {moment(date).tz(timeZone).format('ll')}

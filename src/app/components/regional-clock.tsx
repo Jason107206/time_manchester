@@ -1,8 +1,6 @@
 import { Paper, Typography } from "@mui/material"
 import moment, { Moment } from "moment-timezone"
-
-const addDigit = (value: number) =>
-  value.toString().length == 1 ? `0${value}` : `${value}`
+import { addDigit } from "../utils"
 
 const RegionalClock = ({
   date, timeZone, regionName
@@ -12,15 +10,13 @@ const RegionalClock = ({
   regionName: string
 }) => (
   <Paper
-    elevation={4}
+    variant="outlined"
     className="p-4"
   >
     <div
       className="grid gap-2"
     >
-      <Typography
-        variant="h6"
-      >
+      <Typography>
         {regionName}
       </Typography>
       <div
@@ -38,6 +34,7 @@ const RegionalClock = ({
         </Typography>
       </div>
       <Typography
+        variant="body2"
         color="text.secondary"
       >
         {moment(date).tz(timeZone).format('ll')}

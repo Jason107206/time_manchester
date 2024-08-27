@@ -2,19 +2,19 @@
 
 import { clockList } from "@/database/clock-list";
 import { AccessTime, History, ImportExport } from "@mui/icons-material";
-import { Divider, Fade, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { Fade, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import moment from "moment-timezone";
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { setTimeout } from "timers";
-import DateTimePickerDialog from "./date-time-picker-dialog";
+import DateTimePicker from "./components/date-time-picker";
 
-const LocalClock = dynamic(() => import("./local-clock"), { ssr: false })
-const RegionalClock = dynamic(() => import("./regional-clock"), { ssr: false })
+const LocalClock = dynamic(() => import("./components/local-clock"), { ssr: false })
+const RegionalClock = dynamic(() => import("./components/regional-clock"), { ssr: false })
 
 export default function Home() {
   const [mode, setMode] = useState(0)
-  const [date, setDate] = useState(moment(new Date()))
+  const [date, setDate] = useState(moment())
 
   const isRealtime = useRef(true)
   const [isLoaded, setIsLoaded] = useState(false)
@@ -24,7 +24,7 @@ export default function Home() {
 
   const resetTime = () => {
     if (isRealtime.current) {
-      setDate(moment(new Date()))
+      setDate(moment())
       setTimeout(() => resetTime(), 200)
     }
   }
@@ -47,7 +47,7 @@ export default function Home() {
     <Fade in={isLoaded}>
       <div>
         <div
-          className="p-8 grid gap-8"
+          className="p-8 grid gap-4"
         >
           <LocalClock
             date={date}
@@ -55,24 +55,36 @@ export default function Home() {
             regionName={clockList[localIndex].regionName}
             isShowSecond={mode == 0}
           />
-          <Divider />
-          <div className="grid grid-cols-2 gap-8">
-            {
-              clockList
-                .filter((x, i) => i !== localIndex)
-                .map((x, i) =>
-                  <RegionalClock
-                    key={i}
-                    date={date}
-                    timeZone={x.timeZone}
-                    regionName={x.regionName}
-                  />
-                )
-            }
-          </div>
+          {
+            !isPickerOpened &&
+            <div className="grid grid-cols-2 gap-4">
+              {
+                clockList
+                  .filter((x, i) => i !== localIndex)
+                  .map((x, i) =>
+                    <RegionalClock
+                      key={i}
+                      date={date}
+                      timeZone={x.timeZone}
+                      regionName={x.regionName}
+                    />
+                  )
+              }
+            </div>
+          }
+          {
+            isPickerOpened &&
+            <DateTimePicker
+              defaultDate={mode == 1 ? date : null}
+              timeZone={clockList[localIndex].timeZone}
+              setMode={setMode}
+              setDate={setDate}
+              setPickerOpened={setPickerOpened}
+            />
+          }
         </div>
         <div
-          className="absolute bottom-0 p-6 w-full flex gap-4 justify-end"
+          className="absolute bottom-0 p-4 w-full flex gap-4 justify-end"
         >
           <ToggleButtonGroup
             color="primary"
@@ -80,14 +92,17 @@ export default function Home() {
           >
             <ToggleButton
               value
-              selected={mode == 0}
-              onChange={() => setMode(0)}
+              selected={!isPickerOpened && mode == 0}
+              onChange={() => {
+                setPickerOpened(false)
+                setMode(0)
+              }}
             >
               <AccessTime />&nbsp;Now
             </ToggleButton>
             <ToggleButton
               value
-              selected={mode == 1}
+              selected={isPickerOpened || mode == 1}
               onChange={() => setPickerOpened(true)}
             >
               <History />&nbsp;Specific Time
@@ -102,12 +117,6 @@ export default function Home() {
             <ImportExport />
           </ToggleButton>
         </div>
-        <DateTimePickerDialog
-          open={isPickerOpened}
-          setMode={setMode}
-          setDate={setDate}
-          setPickerOpened={setPickerOpened}
-        />
       </div>
     </Fade>
   )
