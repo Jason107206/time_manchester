@@ -14,17 +14,17 @@ const RegionalClock = dynamic(() => import("./components/regional-clock"), { ssr
 
 export default function Home() {
   const [mode, setMode] = useState(0)
-  const [date, setDate] = useState(moment())
+
+  const [localIndex, setLocalIndex] = useState(0)
+  const [date, setDate] = useState(moment().tz(clockList[localIndex].timeZone))
 
   const isRealtime = useRef(true)
   const [isLoaded, setIsLoaded] = useState(false)
   const [isPickerOpened, setPickerOpened] = useState(false)
 
-  const [localIndex, setLocalIndex] = useState(0)
-
   const resetTime = () => {
     if (isRealtime.current) {
-      setDate(moment())
+      setDate(moment().tz(clockList[localIndex].timeZone))
       setTimeout(() => resetTime(), 200)
     }
   }
@@ -42,6 +42,10 @@ export default function Home() {
       isRealtime.current = false
     }
   }, [mode])
+
+  useEffect(() => {
+    setDate(date.tz(clockList[localIndex].timeZone))
+  }, [localIndex])
 
   return (
     <Fade in={isLoaded}>
