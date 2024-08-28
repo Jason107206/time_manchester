@@ -1,47 +1,57 @@
 'use client'
 
+import { regions } from "@/database/regions";
 import { History } from "@mui/icons-material";
-import { Button, Paper, Typography } from "@mui/material";
+import { Button, FormControl, InputLabel, MenuItem, Paper, Select, Typography } from "@mui/material";
 import { LocalizationProvider, MobileDatePicker, MobileTimePicker } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import moment, { Moment } from "moment-timezone";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 const DateTimePicker = ({
   defaultDate,
-  timeZone,
+  defaultTimezone,
   setMode,
   setDate,
   setPickerOpened
 }: {
   defaultDate: Moment | null,
-  timeZone: string,
+  defaultTimezone: string,
   setMode: Dispatch<SetStateAction<number>>,
   setDate: Dispatch<SetStateAction<Moment>>,
   setPickerOpened: Dispatch<SetStateAction<boolean>>
 }) => {
-  const [dateInput, setDateInput] = useState<Moment | null>(defaultDate)
-  const [timeInput, setTimeInput] = useState<Moment | null>(defaultDate)
+  const [dateInput, setDateInput] = useState<Moment | null>()
+  const [timeInput, setTimeInput] = useState<Moment | null>()
+  const [timezoneInput, setTimezoneInput] = useState<string>(defaultTimezone)
 
   const handleNow = () => {
-    const date = moment()
+    const date = moment().tz(timezoneInput)
     setDateInput(date)
     setTimeInput(date)
   }
 
-  const handleClear = () => {
-    setDateInput(null)
-    setTimeInput(null)
-  }
-
   const handleSelect = () => {
     const date = dateInput ? dateInput : moment()
+    date.tz(timezoneInput)
     date.hour(timeInput ? timeInput.hours() : date.hours()).minute(timeInput ? timeInput.minutes() : date.minutes())
 
     setMode(1)
-    setDate(date.tz(timeZone))
+    setDate(date)
     setPickerOpened(false)
   }
+
+  useEffect(() => {
+    if (defaultDate !== null) {
+      setDateInput(defaultDate.tz(defaultTimezone))
+      setTimeInput(defaultDate.tz(defaultTimezone))
+    }
+  }, [])
+
+  useEffect(() => {
+    if (dateInput !== null) setDateInput(x => x?.tz(timezoneInput))
+    if (timeInput !== null) setTimeInput(x => x?.tz(timezoneInput))
+  }, [timezoneInput])
 
   return (
     <Paper
@@ -57,25 +67,53 @@ const DateTimePicker = ({
         </Typography>
       </div>
       <div
-        className="p-1 flex gap-4"
+        className="p-2 grid"
+      >
+        <FormControl>
+          <InputLabel id="timezoneSelector">Timezone</InputLabel>
+          <Select
+            labelId="timezoneSelector"
+            label="Timezone"
+            value={timezoneInput}
+            onChange={x => setTimezoneInput(x.target.value)}
+          >
+            {
+              regions.map((x, i) =>
+                <MenuItem
+                  key={i}
+                  value={x.timezone}
+                >
+                  {x.name}
+                </MenuItem>
+              )
+            }
+          </Select>
+        </FormControl>
+      </div>
+      <div
+        className="p-2 grid gap-4"
       >
         <LocalizationProvider
           dateAdapter={AdapterMoment}
         >
-          <MobileTimePicker
-            ampm={false}
-            label="Time"
-            timezone={timeZone}
-            value={timeInput}
-            onAccept={date => setTimeInput(date)}
-          />
-          <MobileDatePicker
-            label="Date"
-            format="YYYY/MM/DD"
-            timezone={timeZone}
-            value={dateInput}
-            onAccept={date => setDateInput(date)}
-          />
+          <div
+            className="flex gap-2"
+          >
+            <MobileTimePicker
+              ampm={false}
+              label="Time"
+              timezone={timezoneInput}
+              value={timeInput}
+              onAccept={date => setTimeInput(date)}
+            />
+            <MobileDatePicker
+              label="Date"
+              format="YYYY/MM/DD"
+              timezone={timezoneInput}
+              value={dateInput}
+              onAccept={date => setDateInput(date)}
+            />
+          </div>
         </LocalizationProvider>
       </div>
       <div
@@ -84,16 +122,9 @@ const DateTimePicker = ({
         <Button onClick={handleNow}>
           Now
         </Button>
-        <div
-          className="flex gap-2"
-        >
-          <Button onClick={handleClear}>
-            Clear
-          </Button>
-          <Button onClick={handleSelect}>
-            OK
-          </Button>
-        </div>
+        <Button onClick={handleSelect}>
+          OK
+        </Button>
       </div>
     </Paper>
   )

@@ -4,11 +4,11 @@ import moment, { Moment } from "moment-timezone"
 import { addDigit } from "../utils"
 
 const LocalClock = ({
-  date, timeZone, regionName, isShowSecond
+  date, name, timezone, isShowSecond
 }: {
   date: Moment,
-  timeZone: string,
-  regionName: string,
+  name: string,
+  timezone: string,
   isShowSecond: boolean
 }) => (
   <Paper
@@ -23,7 +23,7 @@ const LocalClock = ({
       >
         <Place color="primary" />
         <Typography>
-          {regionName}
+          {name}
         </Typography>
       </div>
       <div
@@ -32,19 +32,19 @@ const LocalClock = ({
         <Typography
           variant="h4"
         >
-          {addDigit(moment(date).tz(timeZone).hours())}
+          {addDigit(moment(date).tz(timezone).hours())}
         </Typography>
         <Typography
           variant="h4"
         >
-          {addDigit(moment(date).tz(timeZone).minutes())}
+          {addDigit(moment(date).tz(timezone).minutes())}
         </Typography>
         {
           isShowSecond &&
           <Typography
             variant="h5"
           >
-            {addDigit(moment(date).tz(timeZone).seconds())}
+            {addDigit(moment(date).tz(timezone).seconds())}
           </Typography>
         }
       </div>
@@ -52,7 +52,7 @@ const LocalClock = ({
         variant="body2"
         color="text.secondary"
       >
-        {moment(date).tz(timeZone).format('ll')}
+        {moment(date).tz(timezone).format('ll')}
       </Typography>
     </div>
   </Paper>
