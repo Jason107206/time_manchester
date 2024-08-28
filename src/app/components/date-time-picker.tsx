@@ -71,7 +71,7 @@ const DateTimePicker = ({
           />
           <MobileDatePicker
             label="Date"
-            format="YYYY-MM-DD"
+            format="YYYY/MM/DD"
             timezone={timeZone}
             value={dateInput}
             onAccept={date => setDateInput(date)}
