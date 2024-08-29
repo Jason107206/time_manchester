@@ -86,7 +86,7 @@ export default function Home() {
             isPickerOpened &&
             <DateTimePicker
               defaultTimezone={localTimezone}
-              defaultDate={mode == 1 ? date : null}
+              defaultDate={mode == 1 ? date.tz(localTimezone) : null}
               setMode={setMode}
               setDate={setDate}
               setPickerOpened={setPickerOpened}

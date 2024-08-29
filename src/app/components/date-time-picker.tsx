@@ -7,6 +7,7 @@ import { LocalizationProvider, MobileDatePicker, MobileTimePicker } from "@mui/x
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import moment, { Moment } from "moment-timezone";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import TimezonePicker from "./timezone-picker";
 
 const DateTimePicker = ({
   defaultDate,
@@ -21,8 +22,8 @@ const DateTimePicker = ({
   setDate: Dispatch<SetStateAction<Moment>>,
   setPickerOpened: Dispatch<SetStateAction<boolean>>
 }) => {
-  const [dateInput, setDateInput] = useState<Moment | null>()
-  const [timeInput, setTimeInput] = useState<Moment | null>()
+  const [dateInput, setDateInput] = useState<Moment | null>(defaultDate)
+  const [timeInput, setTimeInput] = useState<Moment | null>(defaultDate)
   const [timezoneInput, setTimezoneInput] = useState<string>(defaultTimezone)
 
   const handleNow = () => {
@@ -42,15 +43,8 @@ const DateTimePicker = ({
   }
 
   useEffect(() => {
-    if (defaultDate !== null) {
-      setDateInput(defaultDate.tz(defaultTimezone))
-      setTimeInput(defaultDate.tz(defaultTimezone))
-    }
-  }, [])
-
-  useEffect(() => {
-    if (dateInput !== null) setDateInput(x => x?.tz(timezoneInput))
-    if (timeInput !== null) setTimeInput(x => x?.tz(timezoneInput))
+    if (dateInput !== null) setDateInput(x => x!.tz(timezoneInput))
+    if (timeInput !== null) setTimeInput(x => x!.tz(timezoneInput))
   }, [timezoneInput])
 
   return (
@@ -69,26 +63,10 @@ const DateTimePicker = ({
       <div
         className="p-2 grid"
       >
-        <FormControl>
-          <InputLabel id="timezoneSelector">Timezone</InputLabel>
-          <Select
-            labelId="timezoneSelector"
-            label="Timezone"
-            value={timezoneInput}
-            onChange={x => setTimezoneInput(x.target.value)}
-          >
-            {
-              regions.map((x, i) =>
-                <MenuItem
-                  key={i}
-                  value={x.timezone}
-                >
-                  {x.name}
-                </MenuItem>
-              )
-            }
-          </Select>
-        </FormControl>
+        <TimezonePicker
+          timezone={timezoneInput}
+          setTimezone={setTimezoneInput}
+        />
       </div>
       <div
         className="p-2 grid gap-4"
