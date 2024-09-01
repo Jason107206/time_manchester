@@ -23,18 +23,18 @@ export default function Home() {
   const [isLoaded, setIsLoaded] = useState(false)
   const [isPickerOpened, setPickerOpened] = useState(false)
 
-  const resetTime = () => {
-    if (isRealtime.current) {
-      setDate(moment().tz(localTimezone))
-      setTimeout(() => resetTime(), 200)
-    }
-  }
-
   const resetLocalTimezone = () => {
     const i = regions.findIndex(x => x.timezone === moment.tz.guess())
     if (i > -1) {
       setLocalName(regions[i].name)
       setLocalTimezone(regions[i].timezone)
+    }
+  }
+
+  const resetTime = () => {
+    if (isRealtime.current) {
+      setDate(moment().tz(localTimezone))
+      setTimeout(() => resetTime(), 200)
     }
   }
 
